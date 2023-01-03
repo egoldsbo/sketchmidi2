@@ -1,0 +1,11 @@
+version 1.1.6
+
+improved note off
+changed noteons to note off 0
+added port dialog
+
+
+
+known bugs
+changing patterns mutes other tracks.
+drag left off screen bug
