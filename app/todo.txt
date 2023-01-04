@@ -1,0 +1,33 @@
+appearence
+
+    remove buttons prob and swing
+    blink
+    selected sequence indicator
+    loop column indicator
+    more clear mute
+
+    write tutorial
+
+bugs:
+    check bug where transposition changes
+    release mouse outside screen
+    check "modes"
+    column lag
+    prompt to create midi port
+    check save/load
+
+features:
+    new features
+    midiclock?
+    link a b.
+    velocity/prob bars
+    variations
+    doublespeed
+    cc page
+    solomidi
+    play every other
+    
+
+
+
+
