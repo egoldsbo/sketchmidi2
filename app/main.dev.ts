@@ -274,7 +274,7 @@ const createWindow = async () => {
       const { tracks, beatScale, transpositions: allTranspositions, key: masterKey, scaleType: masterScaleType, currentPattern } = editor;
 
       const transpositions = allTranspositions[currentPattern];
-     currenttrans=Math.floor((counter-1) / 16);
+     currenttrans=Math.floor((counter) / 16);
 
       tracks.forEach((track, t) => {
         let notes;

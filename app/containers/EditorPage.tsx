@@ -128,8 +128,6 @@ export default function EditorPage() {
     }
 
     notesHaveChanged(false);
-
-
     dispatch(changeOctave(newOctave));
   };
 
@@ -586,7 +584,7 @@ export default function EditorPage() {
       }
 
     if (transpositions[i] < 7) {
-      notesHaveChanged(false);
+     // notesHaveChanged(false);
       dispatch(updateTransposition(i, transpositions[i] + 1));
     }
   };
@@ -596,7 +594,7 @@ export default function EditorPage() {
     ipcRenderer.send('midihangtrans', {trackz: tracks[j] , transindex:i });
     }
     if (transpositions[i] > -7) {
-      notesHaveChanged(false);
+     // notesHaveChanged(false);
       dispatch(updateTransposition(i, transpositions[i] - 1));
     }
   };
