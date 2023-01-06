@@ -16,7 +16,7 @@
   "dependencies": {
     "@babel/core": "^7.12.10",
     "@babel/register": "^7.12.10",
-    "easymidi": "^2.0.0",
+    "easymidi": "^2.1.1",
     "midi": "^1.0.0"
   }
 }
