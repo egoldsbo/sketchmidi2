@@ -180,7 +180,7 @@ export default function EditorPage() {
 
   const currentMatrix = isUpdating ? temporaryNotes : currentNotes;
   // const currentMatrix =  currentNotes;
-
+//irshad
   const notesHaveChanged = (turnOn, event? = 'midi_change', extra?) => {
     let col = lastPlayedCol;
     tracks.forEach((track, t) => {
@@ -244,6 +244,7 @@ export default function EditorPage() {
     ipcRenderer.send('state', { fullState });
   }, [fullState]);
 
+  //irshad
   const tick = (evt: any, { col }: any) => {
     setLastPlayedCol(col);
   };
@@ -433,7 +434,7 @@ export default function EditorPage() {
 
   const onConfigOpen = () => setIsConfigOpen(!isConfigOpen);
   const onHelpOpen = () => setIsHelpOpen(!isHelpOpen);
-
+//irshad
   const startUpdating = useCallback(
     ({ x, y, event }) => {
       // console.log(x, y);
@@ -476,7 +477,7 @@ export default function EditorPage() {
     },
     [isUpdating, lastUpdatedCell, temporaryNotes]
   );
-
+//irshad
   const stopUpdating = ({ x, y }) => {
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
       const startCell = isUpdating.cell;
@@ -661,6 +662,7 @@ export default function EditorPage() {
         <div style={{ width: '100%', height: '100%', display: 'flex' }}>
           <StepSequencer
             highlighted={
+              //irshad
               currentTrack.playingMode === PLAYING_MODE.PATTERN
                 ? Math.floor(lastPlayedCol / 16) === currentTrack.currentSection
                   ? lastPlayedCol % 16
