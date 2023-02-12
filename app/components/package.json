@@ -27,7 +27,7 @@
     "@emotion/styled-base": "^10.0.31",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@fortawesome/react-fontawesome": "^0.1.11",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@storybook/addon-a11y": "^6.1.0-beta.4",
     "@storybook/addon-backgrounds": "^6.1.0-beta.4",
     "@storybook/addon-knobs": "^6.1.0-beta.4",
