@@ -14,7 +14,7 @@
     "postinstall": "yarn electron-rebuild"
   },
   "dependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.22.6",
     "@babel/register": "^7.12.10",
     "easymidi": "^2.0.0",
     "midi": "^1.0.0"
