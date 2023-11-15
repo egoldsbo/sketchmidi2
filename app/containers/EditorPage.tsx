@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import Mousetrap from 'mousetrap';
 
+
 import { TRACK_MODE, PLAYING_MODE, KEYS, SCALE_TYPE } from '../constants/modes';
 
 import StepSequencer from '../components/stepSequencer';
@@ -25,6 +26,7 @@ import {
   faQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 import {
   changeChannel,
@@ -58,6 +60,15 @@ import {
 
 import { cloneMatrix } from '../redux/reducers/tracks';
 
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
 const MAX_TABS = 16;
 
 const scaleOptions = Object.entries(SCALE_TYPE).map(([k, v]) => ({
@@ -84,6 +95,10 @@ const Label = styled.label`
 `;
 
 export default function EditorPage() {
+
+
+
+
   const dispatch = useDispatch();
   const store = useStore();
 
@@ -119,6 +134,9 @@ export default function EditorPage() {
   const channel = currentTrack.channel;
 
   const transpositions = allTranspositions[currentPattern];
+
+
+
 
   const setOctave = (newOctave) => {
     ipcRenderer.send('midihang', { trackz:currentTrack});
@@ -177,6 +195,7 @@ export default function EditorPage() {
       dispatch(changeRows(+newRows));
     }
   };
+
 
   const currentMatrix = isUpdating ? temporaryNotes : currentNotes;
   // const currentMatrix =  currentNotes;
@@ -447,7 +466,9 @@ export default function EditorPage() {
     [isUpdating, lastUpdatedCell, temporaryNotes, currentNotes]
   );
 
-  const onUpdating = useCallback(
+
+
+  const onUpdatingLogic= useCallback(
     ({ x, y, event }) => {
       setLastUpdatedCell({ x, y });
       if (!isUpdating) return;
@@ -477,6 +498,8 @@ export default function EditorPage() {
     },
     [isUpdating, lastUpdatedCell, temporaryNotes]
   );
+
+  const onUpdating = debounce(onUpdatingLogic, 20);
 //irshad
   const stopUpdating = ({ x, y }) => {
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
