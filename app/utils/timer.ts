@@ -1,3 +1,5 @@
+//irshad
+
 class Timer {
   timeInterval: number = 1000;
   startOffset: number = 0;
