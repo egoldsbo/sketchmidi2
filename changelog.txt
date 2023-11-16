@@ -4,8 +4,12 @@ improved note off
 changed noteons to note off 0
 added port dialog
 
+todo:
+flashing tabs on and off
+remove  swing and prob controls
+highlighter should not occur on the main grid when in section mode
+more clear indicator of when section is updated
 
 
 known bugs
-changing patterns mutes other tracks.
 drag left off screen bug

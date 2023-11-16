@@ -159,7 +159,7 @@ export default function EditorPage() {
   const mode = tracks[selectedTab].mode;
   const setMode = (newMode) => {
     ipcRenderer.send('midihang', { trackz:currentTrack});
-    /*
+
    const shouldChangeMode = ipcRenderer.sendSync('changeMode', {
       mode,
       newMode
@@ -168,7 +168,7 @@ export default function EditorPage() {
     if (shouldChangeMode) {
       notesHaveChanged(false);
       dispatch(changeMode(newMode));
-    }*/
+    }
   };
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -499,7 +499,7 @@ export default function EditorPage() {
     [isUpdating, lastUpdatedCell, temporaryNotes]
   );
 
-  const onUpdating = debounce(onUpdatingLogic, 20);
+  const onUpdating = debounce(onUpdatingLogic, 50);
 //irshad
   const stopUpdating = ({ x, y }) => {
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
