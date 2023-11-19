@@ -454,7 +454,22 @@ export default function EditorPage() {
   const onConfigOpen = () => setIsConfigOpen(!isConfigOpen);
   const onHelpOpen = () => setIsHelpOpen(!isHelpOpen);
 //irshad
+const handleMouseLeave = (event) => {
+ if(event.clientX<0||event.clientY<0||event.clientX>window.innerWidth||event.clientY>window.innerHeight){
+    setIsUpdating(false);
+    setLastUpdatedCell(false);
+ }
+};
+useEffect(() => {
+  window.addEventListener('mouseup', handleMouseLeave);
+  return () => {
+      window.removeEventListener('mouseup', handleMouseLeave);
+  };
+}, []);
+
   const startUpdating = useCallback(
+
+
     ({ x, y, event }) => {
       // console.log(x, y);
       let notes = cloneMatrix(currentNotes);
@@ -470,6 +485,7 @@ export default function EditorPage() {
 
   const onUpdatingLogic= useCallback(
     ({ x, y, event }) => {
+      //ipcRenderer.send('poster', {post:"ping"});
       setLastUpdatedCell({ x, y });
       if (!isUpdating) return;
 
@@ -501,7 +517,7 @@ export default function EditorPage() {
 
   const onUpdating = debounce(onUpdatingLogic, 50);
 //irshad
-  const stopUpdating = ({ x, y }) => {
+  const stopUpdating = ({ x, y}) => {
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
       const startCell = isUpdating.cell;
       const startX = Math.min(startCell.x, lastUpdatedCell.x);

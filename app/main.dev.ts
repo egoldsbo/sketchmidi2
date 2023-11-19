@@ -460,10 +460,7 @@ lastnotes.set(trackz.name,[]);
   });
 
   ipcMain.on('poster', (evt, { post }) => {
-
-
-   console.log("printer",post);
-
+   console.log("poster",post);
   });
 
 
