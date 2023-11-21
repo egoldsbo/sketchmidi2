@@ -184,7 +184,7 @@ const StepSequencerWithRef = (
                   onPointerEnter={(event) => onMove({event, x, y})}
                   color={colorFull}
                   highlighted={is15 && y === 7}
-                  colHighlight={isPlaying && x === highlighted}
+                  colHighlight={x === highlighted}
                   colHighlightColor={preview ? color075 : color025}
                   x={x}
                   y={y}
