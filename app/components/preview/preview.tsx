@@ -115,11 +115,7 @@ const SectionControl_ = ({
   return (
     <SectionControlWrapper area={area} color={color} highlighted={highlighted}>
       {
-      <Button onClick={onCopyPaste} color={color} inverse>
-        <FontAwesomeIcon
-          icon={isCopying ? faTimes : isPasting ? faArrowDown : faCopy}
-        />
-      </Button>
+
       }
       <Stepper
         value={transpose}

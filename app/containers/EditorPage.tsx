@@ -847,15 +847,7 @@ const EditorMenu = ({
   onHelpOpen,
 }) => (
   <Menu>
-    <Label>Swing:</Label>
-    <RangeInput
-      value={Math.floor(swing * 100)}
-      onChange={changeSwingOnTone}
-      min={0}
-      max={100}
-      step={1}
-      inverse
-    />
+  {/* swingwashere */}
     <Label> Tempo: </Label>
     <RangeInput
       value={tempo}
