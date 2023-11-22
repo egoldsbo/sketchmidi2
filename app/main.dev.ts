@@ -114,7 +114,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.on('close', function (e) {
-    /* if (!stateIsSaved) {
+     if (!stateIsSaved) {
        const choice = dialog.showMessageBoxSync(this, {
          type: 'question',
          buttons: ['Yes', 'No'],
@@ -124,7 +124,7 @@ const createWindow = async () => {
        if (choice === 1) {
          e.preventDefault();
        }
-     }*/
+     }
 
     for (var i = 0; i < 16; i++) {
       for (var j = 0; j < 127; j++) {
@@ -393,7 +393,11 @@ const createWindow = async () => {
 
   if (deviceNotFound == true) {
     console.log("No Device found");
-    // You need to show your popup here
+    dialog.showMessageBox(mainWindow, {
+      type: 'error',
+      title: 'No MIDI Device Found',
+      message: 'No MIDI port named sketchMIDI was found and a virtual MIDI device could not be created. sketchMIDI will not function without a MIDI outlet. if using windows,it is reccomended to install the program "loopMIDI" and create a virtual MIDI device called SketchMIDI (case sensitive). https://www.tobias-erichsen.de/software/loopmidi.html'
+    });
   }
 
   mainWindow.on('closed', () => {
