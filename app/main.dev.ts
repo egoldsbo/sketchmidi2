@@ -389,6 +389,8 @@ const createWindow = async () => {
     });
   } else {
     output = new easymidi.Output(outputName, true);
+    deviceNotFound = false;
+    console.log("We created a port named",outputName);
   }
 
   if (deviceNotFound == true) {
