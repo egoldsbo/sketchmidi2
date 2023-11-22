@@ -40,7 +40,7 @@ var noteoffflag=[];
 var noteoffflagchannel=[];
 var currenttrans=0;
 var newlyplayednotes=[];
-
+var midiclock=true;
 
 export default class AppUpdater {
   constructor() {
@@ -262,8 +262,10 @@ const createWindow = async () => {
   const midiTimerCallback = () => {
 
     midiClockTicks++;
-    //output.send('clock');
+    if(midiclock==true){
+    output.send('clock');
 
+    }
     midiClockTicks = midiClockTicks % 6;
     if (midiClockTicks == 0) {
 
@@ -403,13 +405,15 @@ const createWindow = async () => {
 
   ipcMain.on('play', () => {
     counter = 0;
-    output.send('start');
+    if(midiclock==true){
+    output.send('start');}
     swinger.start();
   });
 
   ipcMain.on('stop', () => {
     counter = 0;
-    output.send('stop');
+    if(midiclock==true){
+    output.send('stop');}
     midiClockTicks = -1;
     swinger.stop();
   });
@@ -463,7 +467,15 @@ lastnotes.set(trackz.name,[]);
    console.log("poster",post);
   });
 
-
+  ipcMain.on('toggleMidiClock', (evt) => {
+    console.log("togglemidiclock");
+    if(midiclock==true){
+      midiclock=false;
+    }
+    else{
+      midiclock=true;
+    }
+   });
 
   const note_map = [];
   for (let i = 0; i < 16; i++) {
