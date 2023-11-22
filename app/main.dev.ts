@@ -375,7 +375,7 @@ const createWindow = async () => {
   var deviceNotFound = true;
 
 
-  if (process.platform === 'win32') {
+
     let allOutputs = easymidi.getOutputs();
     allOutputs.some((name) => {
       let deviceName = name.toLowerCase();
@@ -387,7 +387,7 @@ const createWindow = async () => {
 
       }
     });
-  } else {
+    if (deviceNotFound == true){
     output = new easymidi.Output(outputName, true);
     deviceNotFound = false;
     console.log("We created a port named",outputName);
