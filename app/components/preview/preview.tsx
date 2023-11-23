@@ -17,6 +17,7 @@ import StepSequencer from '../stepSequencer/stepSequencer';
 
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { is } from 'immer/dist/internal';
 
 const alphabet = new Array(26)
   .fill(65)
@@ -113,13 +114,9 @@ const SectionControl_ = ({
 }) => {
   return (
     <SectionControlWrapper area={area} color={color} highlighted={highlighted}>
-      {/*
-      <Button onClick={onCopyPaste} color={color} inverse>
-        <FontAwesomeIcon
-          icon={isCopying ? faTimes : isPasting ? faArrowDown : faCopy}
-        />
-      </Button>
-      */}
+      {
+
+      }
       <Stepper
         value={transpose}
         countUp={transposeUp}
@@ -154,6 +151,13 @@ const DndStepSequencer = ({
   onDrop,
   isSelected,
 }) => {
+
+
+  const localHighlightedIndex = highlighted % 16
+
+
+
+
   const ref = useRef(null);
 
   const name = `StepSequencer-${i}`;
@@ -191,7 +195,7 @@ const DndStepSequencer = ({
       preview={preview}
       onClick={onClick}
       isSelected={isSelected}
-      highlighted={highlighted}
+      highlighted={localHighlightedIndex}
     />
   );
 };
@@ -223,6 +227,7 @@ const Preview = ({
   const isSection3 = highlighted >= 32 && highlighted <= 47;
   const isSection4 = highlighted >= 48 && highlighted <= 63;
 
+
   const sectionClick0 = useMemo(() => onSectionClick(0), [onSectionClick]);
   const sectionClick1 = useMemo(() => onSectionClick(1), [onSectionClick]);
   const sectionClick2 = useMemo(() => onSectionClick(2), [onSectionClick]);
@@ -236,53 +241,53 @@ const Preview = ({
             i={0}
             matrix={pattern[0]}
             subDivisions={4}
-            isPlaying={isPlaying && isSection1}
+            isPlaying={currentSection === 0}
             color={color}
             showLastDivider
             preview
             onClick={sectionClick0}
             onDrop={onDrop}
-            isSelected={isSection1 && currentSection}
-            highlighted={highlighted % 16}
+            isSelected={currentSection == 0}
+            highlighted={isSection1 ? highlighted :-1}
           />
           <DndStepSequencer
             i={1}
             matrix={pattern[1]}
             subDivisions={4}
-            isPlaying={isPlaying && isSection2}
+            isPlaying={currentSection === 1}
             color={color}
             showLastDivider
             preview
             onClick={sectionClick1}
             onDrop={onDrop}
-            isSelected={isSection2 && currentSection}
-            highlighted={highlighted % 16}
+            isSelected={currentSection == 1}
+            highlighted={isSection2 ? highlighted :-1}
           />
           <DndStepSequencer
             i={2}
             matrix={pattern[2]}
             subDivisions={4}
-            isPlaying={isPlaying && isSection3}
+            isPlaying={currentSection === 2}
             color={color}
             showLastDivider
             preview
             onClick={sectionClick2}
             onDrop={onDrop}
-            isSelected={isSection3 && currentSection}
-            highlighted={highlighted % 16}
+            isSelected={currentSection == 2}
+            highlighted={isSection3 ? highlighted :-1}
           />
           <DndStepSequencer
             i={3}
             matrix={pattern[3]}
             subDivisions={4}
-            isPlaying={isPlaying && isSection4}
+            isPlaying={currentSection === 3}
             color={color}
             preview
             onClick={sectionClick3}
             last
             onDrop={onDrop}
-            isSelected={isSection4 && currentSection}
-            highlighted={highlighted % 16}
+            isSelected={currentSection == 3}
+            highlighted={isSection4 ? highlighted :-1}
           />
         </PreviewWrapper>
         <SectionControl

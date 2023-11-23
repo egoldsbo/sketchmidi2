@@ -258,7 +258,9 @@ export default function EditorPage() {
 
     dispatch(loadTracks(tracksFromFile));
   };
-
+  const toggleMidiClock = () => {
+    ipcRenderer.send('toggleMidiClock');
+  };
   useEffect(() => {
     ipcRenderer.send('state', { fullState });
   }, [fullState]);
@@ -771,6 +773,9 @@ useEffect(() => {
                 inverse
                 showEmpty={false}
               />
+               <Button inverse onClick={toggleMidiClock}>
+                  Midiclock
+                </Button>
               <div style={{ display: 'flex' }}>
                 <Button inverse onClick={loadTracksFromFile}>
                   Load
@@ -779,6 +784,7 @@ useEffect(() => {
                   Save
                 </Button>
               </div>
+
             </div>
           </Modal>
         </div>
@@ -847,15 +853,7 @@ const EditorMenu = ({
   onHelpOpen,
 }) => (
   <Menu>
-    <Label>Swing:</Label>
-    <RangeInput
-      value={Math.floor(swing * 100)}
-      onChange={changeSwingOnTone}
-      min={0}
-      max={100}
-      step={1}
-      inverse
-    />
+  {/* swingwashere */}
     <Label> Tempo: </Label>
     <RangeInput
       value={tempo}

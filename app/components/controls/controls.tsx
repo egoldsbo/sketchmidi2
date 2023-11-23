@@ -101,16 +101,7 @@ const Controls = ({
       </Button>
     </Actions>
     <ListSelect>
-      <span>Probability:</span>
-      <RangeInput
-        value={randomThreshold}
-        onChange={setRandomThreshold}
-        min={0}
-        max={100}
-        step={1}
-        inverse
-        color={color}
-      />
+ {/* probabilitywashere */}
       <Select
         options={rowOptions}
         selected={rows}

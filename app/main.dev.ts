@@ -40,7 +40,7 @@ var noteoffflag=[];
 var noteoffflagchannel=[];
 var currenttrans=0;
 var newlyplayednotes=[];
-
+var midiclock=true;
 
 export default class AppUpdater {
   constructor() {
@@ -114,7 +114,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.on('close', function (e) {
-    /* if (!stateIsSaved) {
+     if (!stateIsSaved) {
        const choice = dialog.showMessageBoxSync(this, {
          type: 'question',
          buttons: ['Yes', 'No'],
@@ -124,7 +124,7 @@ const createWindow = async () => {
        if (choice === 1) {
          e.preventDefault();
        }
-     }*/
+     }
 
     for (var i = 0; i < 16; i++) {
       for (var j = 0; j < 127; j++) {
@@ -262,8 +262,10 @@ const createWindow = async () => {
   const midiTimerCallback = () => {
 
     midiClockTicks++;
-    //output.send('clock');
+    if(midiclock==true){
+    output.send('clock');
 
+    }
     midiClockTicks = midiClockTicks % 6;
     if (midiClockTicks == 0) {
 
@@ -373,7 +375,7 @@ const createWindow = async () => {
   var deviceNotFound = true;
 
 
-  if (process.platform === 'win32') {
+
     let allOutputs = easymidi.getOutputs();
     allOutputs.some((name) => {
       let deviceName = name.toLowerCase();
@@ -385,13 +387,19 @@ const createWindow = async () => {
 
       }
     });
-  } else {
+    if (deviceNotFound == true){
     output = new easymidi.Output(outputName, true);
+    deviceNotFound = false;
+    console.log("We created a port named",outputName);
   }
 
   if (deviceNotFound == true) {
     console.log("No Device found");
-    // You need to show your popup here
+    dialog.showMessageBox(mainWindow, {
+      type: 'error',
+      title: 'No MIDI Device Found',
+      message: 'No MIDI port named sketchMIDI was found and a virtual MIDI device could not be created. sketchMIDI will not function without a MIDI outlet. if using windows,it is reccomended to install the program "loopMIDI" and create a virtual MIDI device called SketchMIDI (case sensitive). https://www.tobias-erichsen.de/software/loopmidi.html'
+    });
   }
 
   mainWindow.on('closed', () => {
@@ -403,13 +411,15 @@ const createWindow = async () => {
 
   ipcMain.on('play', () => {
     counter = 0;
-    output.send('start');
+    if(midiclock==true){
+    output.send('start');}
     swinger.start();
   });
 
   ipcMain.on('stop', () => {
     counter = 0;
-    output.send('stop');
+    if(midiclock==true){
+    output.send('stop');}
     midiClockTicks = -1;
     swinger.stop();
   });
@@ -463,7 +473,15 @@ lastnotes.set(trackz.name,[]);
    console.log("poster",post);
   });
 
-
+  ipcMain.on('toggleMidiClock', (evt) => {
+    console.log("togglemidiclock");
+    if(midiclock==true){
+      midiclock=false;
+    }
+    else{
+      midiclock=true;
+    }
+   });
 
   const note_map = [];
   for (let i = 0; i < 16; i++) {
