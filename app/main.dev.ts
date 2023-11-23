@@ -320,6 +320,16 @@ const createWindow = async () => {
               trackplayingnotes: track.playingnotes,
 
             });
+
+
+/*irshad
+            if(track.playingnotes.length==0){
+              //blinktracklabelon
+            } else{
+              //blinktracklabeloff
+            }
+*/
+
 //add newly played notes to currentlyplayingnotesarray
 
             if(lastnotes.has(track.name)==false){
@@ -450,10 +460,7 @@ lastnotes.set(trackz.name,[]);
   });
 
   ipcMain.on('poster', (evt, { post }) => {
-
-
-   console.log("printer",post);
-
+   console.log("poster",post);
   });
 
 

@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import Mousetrap from 'mousetrap';
 
+
 import { TRACK_MODE, PLAYING_MODE, KEYS, SCALE_TYPE } from '../constants/modes';
 
 import StepSequencer from '../components/stepSequencer';
@@ -25,6 +26,7 @@ import {
   faQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 import {
   changeChannel,
@@ -58,6 +60,15 @@ import {
 
 import { cloneMatrix } from '../redux/reducers/tracks';
 
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
 const MAX_TABS = 16;
 
 const scaleOptions = Object.entries(SCALE_TYPE).map(([k, v]) => ({
@@ -84,6 +95,10 @@ const Label = styled.label`
 `;
 
 export default function EditorPage() {
+
+
+
+
   const dispatch = useDispatch();
   const store = useStore();
 
@@ -120,6 +135,9 @@ export default function EditorPage() {
 
   const transpositions = allTranspositions[currentPattern];
 
+
+
+
   const setOctave = (newOctave) => {
     ipcRenderer.send('midihang', { trackz:currentTrack});
     if (typeof newOctave === 'string') {
@@ -141,7 +159,7 @@ export default function EditorPage() {
   const mode = tracks[selectedTab].mode;
   const setMode = (newMode) => {
     ipcRenderer.send('midihang', { trackz:currentTrack});
-    /*
+
    const shouldChangeMode = ipcRenderer.sendSync('changeMode', {
       mode,
       newMode
@@ -150,7 +168,7 @@ export default function EditorPage() {
     if (shouldChangeMode) {
       notesHaveChanged(false);
       dispatch(changeMode(newMode));
-    }*/
+    }
   };
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -178,9 +196,10 @@ export default function EditorPage() {
     }
   };
 
+
   const currentMatrix = isUpdating ? temporaryNotes : currentNotes;
   // const currentMatrix =  currentNotes;
-
+//irshad
   const notesHaveChanged = (turnOn, event? = 'midi_change', extra?) => {
     let col = lastPlayedCol;
     tracks.forEach((track, t) => {
@@ -244,6 +263,7 @@ export default function EditorPage() {
     ipcRenderer.send('state', { fullState });
   }, [fullState]);
 
+  //irshad
   const tick = (evt: any, { col }: any) => {
     setLastPlayedCol(col);
   };
@@ -433,8 +453,23 @@ export default function EditorPage() {
 
   const onConfigOpen = () => setIsConfigOpen(!isConfigOpen);
   const onHelpOpen = () => setIsHelpOpen(!isHelpOpen);
+//irshad
+const handleMouseLeave = (event) => {
+ if(event.clientX<0||event.clientY<0||event.clientX>window.innerWidth||event.clientY>window.innerHeight){
+    setIsUpdating(false);
+    setLastUpdatedCell(false);
+ }
+};
+useEffect(() => {
+  window.addEventListener('mouseup', handleMouseLeave);
+  return () => {
+      window.removeEventListener('mouseup', handleMouseLeave);
+  };
+}, []);
 
   const startUpdating = useCallback(
+
+
     ({ x, y, event }) => {
       // console.log(x, y);
       let notes = cloneMatrix(currentNotes);
@@ -446,8 +481,11 @@ export default function EditorPage() {
     [isUpdating, lastUpdatedCell, temporaryNotes, currentNotes]
   );
 
-  const onUpdating = useCallback(
+
+
+  const onUpdatingLogic= useCallback(
     ({ x, y, event }) => {
+      //ipcRenderer.send('poster', {post:"ping"});
       setLastUpdatedCell({ x, y });
       if (!isUpdating) return;
 
@@ -477,7 +515,9 @@ export default function EditorPage() {
     [isUpdating, lastUpdatedCell, temporaryNotes]
   );
 
-  const stopUpdating = ({ x, y }) => {
+  const onUpdating = debounce(onUpdatingLogic, 50);
+//irshad
+  const stopUpdating = ({ x, y}) => {
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
       const startCell = isUpdating.cell;
       const startX = Math.min(startCell.x, lastUpdatedCell.x);
@@ -661,6 +701,7 @@ export default function EditorPage() {
         <div style={{ width: '100%', height: '100%', display: 'flex' }}>
           <StepSequencer
             highlighted={
+              //irshad
               currentTrack.playingMode === PLAYING_MODE.PATTERN
                 ? Math.floor(lastPlayedCol / 16) === currentTrack.currentSection
                   ? lastPlayedCol % 16
