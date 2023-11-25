@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import styled from '@emotion/styled';
 import {
@@ -90,6 +90,7 @@ const Mute = styled.div`
   font-size: 12px;
   align-items: center;
   justify-content: center;
+  color: ${({ color }) => color || 'currentColor'};
   ${({ show }) => (show ? `display: flex;  padding: 5px;` : `display:none;`)}
 `;
 
@@ -120,6 +121,7 @@ const Tab = ({
   className,
   setIsMute,
   children,
+  isBlink,
   label = '',
   setLabel = () => {},
   removeTab = () => {},
@@ -189,15 +191,14 @@ const Tab = ({
             onChange={onSelectChange}
           />
         )}
-        <Mute show={showIcon} onClick={onMute}>
-          <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
-        </Mute>
-        <Mute
-          show={showIcon && isEditing && !last && active}
-          onClick={onDelete}
-        >
-          <FontAwesomeIcon icon={faTrashAlt} />
-        </Mute>
+<Mute
+  show={showIcon}
+  onClick={onMute}
+  color={(isBlink && !isMuted) ? '#FFFFFF' : parsedColor.toString()}
+>
+  <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
+</Mute>
+
       </InnerContainer>
     </Container>
   );
@@ -211,6 +212,7 @@ Tab.defaultProps = {
   isMuted: false,
   showIcon: false,
   setIsMute: () => {},
+  isBlink: false,
 };
 
 Tab.propTypes = {
@@ -218,6 +220,7 @@ Tab.propTypes = {
   color: PropTypes.string,
   selectTab: PropTypes.func,
   highlight: PropTypes.bool,
+  isBlink: PropTypes.bool,
   isMuted: PropTypes.bool,
   showIcon: PropTypes.bool,
   style: PropTypes.object,

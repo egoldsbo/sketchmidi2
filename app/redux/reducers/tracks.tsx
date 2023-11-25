@@ -353,23 +353,13 @@ export function editorReducer(state = initialTrackReducer, action: any) {
       return { ...state, tracks: updatedTracks, changesWereSaved: false};
 
       case CHANGE_PLAYING_NOTES:
-        updatedTracks = state.tracks.map((track, i) => {
-
-          console.log("Old Playing note ",track.playingnotes);
-          console.log("New Playing note ",action);
-          if (i !== state.activeTrack) {
-            return track;
+        updatedTracks = state.tracks.map((track) => {
+          if (track.name !== action.payload.trackName) {
+              return track;
           }
-
-          let playingNotes = [];
-          if(action.playingNotes){
-            playingNotes = action.playingNotes;
-          }
-
-          return { ...track, playingnotes:playingNotes
-          };
-        });
-        return { ...state, tracks: updatedTracks, changesWereSaved: false};
+          return { ...track, playingnotes: action.payload.playingNotes };
+      });
+      return { ...state, tracks: updatedTracks, changesWereSaved: false };
 
     case CHANGE_ROWS:
       updatedTracks = state.tracks.map((track, i) => {
