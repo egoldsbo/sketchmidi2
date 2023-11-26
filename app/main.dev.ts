@@ -350,8 +350,11 @@ const createWindow = async () => {
         }
         mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:track.playingnotes});
         console.log(track.name,track.playingnotes);
+        mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:track.playingnotes});
+        console.log(track.name,track.playingnotes);
 
       });
+
 
       counter++;
       counter = counter % 64;
@@ -421,7 +424,7 @@ const createWindow = async () => {
     output.send('stop');}
     midiClockTicks = -1;
     swinger.stop();
-    });
+  });
 
   ipcMain.on('currenttrackname', (evt, { currenttrackName }) => {
     currenttrackname = currenttrackName;
@@ -445,6 +448,8 @@ lastnotes.set(trackz.name,[]);
   }
   trackz.playingnotes=[];
   mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
+  trackz.playingnotes=[];
+  mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
   });
 
 
@@ -461,6 +466,8 @@ lastnotes.set(trackz.name,[]);
       });
     lastnotes.set(trackz.name,[]);
       }
+      trackz.playingnotes=[];
+      mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
       trackz.playingnotes=[];
       mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
     }
