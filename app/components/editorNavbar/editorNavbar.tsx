@@ -52,6 +52,7 @@ const TabAll_ = ({
     <>
       {tabs.map((tab, i) => (
         <Tab
+          isBlink={tab.isBlink}
           key={i}
           active={selectedTab === i}
           style={{

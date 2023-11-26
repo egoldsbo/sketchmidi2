@@ -302,6 +302,9 @@ export default function EditorPage() {
       if (isPlaying) {
         ipcRenderer.send('panic', tracks);
         ipcRenderer.send('stop');
+        tracks.forEach((track, t) => {
+          ipcRenderer.send('midihang', { trackz:track});
+        });
       } else {
         setLastPlayedCol(0);
         ipcRenderer.send('play');
@@ -409,9 +412,9 @@ export default function EditorPage() {
     ipcRenderer.on('fileSaved', ({ filePath }) => {
       dispatch(saveTracks(filePath));
     });
-    ipcRenderer.on('savePlayingNotes',(evt,{playingNotes})=>{
+    ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingNotes})=>{
       console.log("Playing Notes " + playingNotes)
-      dispatch(changePlayingNotes(playingNotes));
+      dispatch(changePlayingNotes(trackName, playingNotes));
     })
 
 
@@ -682,7 +685,10 @@ useEffect(() => {
 
   const navbar = (
     <EditorNavbar
-      tabs={tracks}
+    tabs={tracks.map(track => ({
+      ...track,
+      isBlink: track.playingnotes.some(note => note !== 0) && track.isMuted == 0 ? 1 : 0
+    }))}
       selectedTab={selectedTab}
       selectTab={selectTab}
       setIsMute={setTabMute}

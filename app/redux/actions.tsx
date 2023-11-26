@@ -48,9 +48,9 @@ export const changeOctave = (newOctave: number) => ({
   octave: newOctave,
 });
 
-export const changePlayingNotes = (notes: number[]) => ({
-  type: CHANGE_PLAYING_NOTES,
-  playingNotes: notes,
+export const changePlayingNotes = (trackName, playingNotes) => ({
+  type: 'CHANGE_PLAYING_NOTES',
+  payload: { trackName, playingNotes }
 });
 
 

@@ -49,3 +49,8 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 # app/lib/
+app/components/editorNavbar/editorNavbar.txt
+app/components/tab/tab.txt
+.gitignore
+app/containers/EditorPage.txt
+app/redux/actions.txt
