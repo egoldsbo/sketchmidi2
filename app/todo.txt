@@ -1,18 +1,16 @@
 
-    blink
     more clear mute
     write tutorial
 
 bugs:
-    check bug where transposition changes
     error message on startup before play is played.
+    error message of close
     check "modes"
     prompt to create midi port
     check save/load
 
 features:
     new features
-    midiclock?
     link a b.
     velocity/prob bars
     variations

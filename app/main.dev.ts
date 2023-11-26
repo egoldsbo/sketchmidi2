@@ -29,15 +29,8 @@ let appState: any = {};
 let swinger;
 var newtempo = 120;
 var newswing = 0;
-var newswinglast = 0;
-var newtempolast = 120;
 var midiClockTicks = -1;
-var tracknameindex=[];
-var currenttrackname = '1';
-var holdplayingnotes = []
 const START_TEMPO = 120;
-var noteoffflag=[];
-var noteoffflagchannel=[];
 var currenttrans=0;
 var newlyplayednotes=[];
 var midiclock=true;
@@ -49,6 +42,31 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+autoUpdater.on('update-available', () => {
+  if (mainWindow !== null) {
+    dialog.showMessageBox(mainWindow, {
+      type: 'error',
+      title: 'update',
+      message: 'A new version of SketchMIDI is available. sketchMIDI is currently in beta, and this update may contain major bug fixes. an updated version of sketchmidi can be found at:',
+    });
+  }
+});
+
+autoUpdater.on('update-not-available', () => {
+ console.log("update not available");
+});
+
+autoUpdater.on('error', (err) => {
+ console.log("error");
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+});
+
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+
+});
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -176,17 +194,6 @@ const createWindow = async () => {
     ) => {
 
 
-      var eventempo = newtempo + (newtempo * newswing / 2);
-      var oddtempo = newtempo - (newtempo * newswing / 2);
-
-      if (column % 2 == 0) { swinger.setTempo(eventempo); }
-      if (column % 2 == 1) { swinger.setTempo(oddtempo); }
-      newswinglast = newswing;
-      newtempolast = newtempo;
-
-
-
-
       if (didMidiChange) {
         didMidiChange = false;
         return trackplayingnotes;
@@ -301,9 +308,6 @@ const createWindow = async () => {
 
 
         if (!track.isMuted) {
-
-          //console.log("before playingNotes ",track.playingnotes);
-
           track.playingnotes =
             midiCallback({}, {
               beatScale,
@@ -323,17 +327,6 @@ const createWindow = async () => {
 
             });
 
-
-/*irshad
-            if(track.playingnotes.length==0){
-              //blinktracklabelon
-            } else{
-              //blinktracklabeloff
-            }
-*/
-
-//add newly played notes to currentlyplayingnotesarray
-
             if(lastnotes.has(track.name)==false){
                 lastnotes.set(track.name,[]);
             }
@@ -350,9 +343,6 @@ const createWindow = async () => {
         }
         mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:track.playingnotes});
         console.log(track.name,track.playingnotes);
-        mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:track.playingnotes});
-        console.log(track.name,track.playingnotes);
-
       });
 
 
@@ -362,8 +352,6 @@ const createWindow = async () => {
   }
 
   ipcMain.on('swingChange', (evt, { swing }) => {
-
-
     newswing = swing;
   });
 
@@ -448,8 +436,6 @@ lastnotes.set(trackz.name,[]);
   }
   trackz.playingnotes=[];
   mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
-  trackz.playingnotes=[];
-  mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
   });
 
 
@@ -466,8 +452,6 @@ lastnotes.set(trackz.name,[]);
       });
     lastnotes.set(trackz.name,[]);
       }
-      trackz.playingnotes=[];
-      mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
       trackz.playingnotes=[];
       mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
     }

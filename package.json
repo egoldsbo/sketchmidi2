@@ -1,9 +1,14 @@
 {
   "name": "quick-mid",
   "productName": "SketchMIDI",
-  "version": "1.0.0-beta-2",
+  "version": "1.0.1-beta",
   "description": "A simple stepsequencer built in Electron.",
   "homepage": "https://lotuz.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/egoldsbo/sketchmidi2.git"
+  },
+
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --color",
@@ -59,8 +64,14 @@
     ]
   },
   "build": {
+    "publish": {
+      "provider": "github",
+      "repo": "sketchmidi2",
+      "owner": "egoldsbo"
+    },
     "productName": "SketchMIDI",
     "appId": "dev.lotuz.SketchMIDI",
+
     "files": [
       "dist/",
       "node_modules/",
