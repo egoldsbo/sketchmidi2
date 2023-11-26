@@ -421,7 +421,7 @@ const createWindow = async () => {
     output.send('stop');}
     midiClockTicks = -1;
     swinger.stop();
-
+    });
 
   ipcMain.on('currenttrackname', (evt, { currenttrackName }) => {
     currenttrackname = currenttrackName;
@@ -475,15 +475,10 @@ lastnotes.set(trackz.name,[]);
    console.log("poster",post);
   });
 
-  ipcMain.on('toggleMidiClock', (evt) => {
-    console.log("togglemidiclock");
-    if(midiclock==true){
-      midiclock=false;
-    }
-    else{
-      midiclock=true;
-    }
-   });
+  ipcMain.on('clock-switch-state', (event, newState) => {
+   midiclock=newState;
+   console.log('midiclock on/off:', midiclock);
+  });
 
   const note_map = [];
   for (let i = 0; i < 16; i++) {
@@ -703,9 +698,13 @@ lastnotes.set(trackz.name,[]);
       evt.returnValue = { state: tracksState, filePath };
     });
   });
+
+
   ipcMain.on('stateStatusUpdate', (evt, { currentStateIsSaved }) => {
     stateIsSaved = currentStateIsSaved;
   });
+
+
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 

@@ -54,3 +54,5 @@ app/components/tab/tab.txt
 .gitignore
 app/containers/EditorPage.txt
 app/redux/actions.txt
+app/components/switch/switch.txt
+saves/newSong.json
