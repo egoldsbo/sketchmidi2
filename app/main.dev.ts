@@ -39,34 +39,42 @@ export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.checkForUpdates();
+
+    autoUpdater.on('update-available', () => {
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Available',
+        message: 'A new version of SketchMIDI is available. Do you want to update now?',
+        buttons: ['Update', 'Later']
+      }).then((result) => {
+        if (result.response === 0) { // The user selected 'Update'
+          autoUpdater.downloadUpdate();
+        }
+      });
+    });
+
+    autoUpdater.on('update-not-available', () => {
+      console.log('Update not available');
+    });
+
+    autoUpdater.on('error', (err) => {
+      dialog.showErrorBox('Error: ', err == null ? "unknown" : (err.stack || err).toString());
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+      dialog.showMessageBox({
+        title: 'Install Updates',
+        message: 'Updates downloaded, application will be quit for update...'
+      }).then(() => {
+        setImmediate(() => autoUpdater.quitAndInstall());
+      });
+    });
   }
 }
 
-autoUpdater.on('update-available', () => {
-  if (mainWindow !== null) {
-    dialog.showMessageBox(mainWindow, {
-      type: 'error',
-      title: 'update',
-      message: 'A new version of SketchMIDI is available. sketchMIDI is currently in beta, and this update may contain major bug fixes. an updated version of sketchmidi can be found at:',
-    });
-  }
-});
 
-autoUpdater.on('update-not-available', () => {
- console.log("update not available");
-});
-
-autoUpdater.on('error', (err) => {
- console.log("error");
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-});
-
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-
-});
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -128,6 +136,8 @@ const createWindow = async () => {
           preload: path.join(__dirname, 'dist/renderer.prod.js'),
         },
   });
+
+
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 

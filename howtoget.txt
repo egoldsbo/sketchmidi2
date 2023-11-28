@@ -1,0 +1,23 @@
+
+git clone https://github.com/egoldsbo/SketchMIDI
+cd app
+npm install
+npm run dev
+
+
+git add .
+git commit -m "Update code"
+git push
+
+
+
+npm 16
+python 2.7
+npm install --legacy-peer-deps
+
+for packaging:
+nvm ls
+nvm use 12
+python --version
+
+
