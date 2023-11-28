@@ -1,0 +1,25 @@
+
+    more clear mute
+    write tutorial
+
+bugs:
+    error message on startup before play is played.
+    error message of close
+    check "modes"
+    prompt to create midi port
+    check save/load
+
+features:
+    new features
+    link a b.
+    velocity/prob bars
+    variations
+    doublespeed
+    cc page
+    solomidi
+    play every other
+
+
+
+
+
