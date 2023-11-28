@@ -1,7 +1,7 @@
 {
   "name": "quick-mid",
   "productName": "SketchMIDI",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple stepsequencer built in Electron.",
   "main": "./main.prod.js",
   "author": {

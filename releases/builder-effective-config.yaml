@@ -1,0 +1,35 @@
+directories:
+  output: releases
+  buildResources: resources
+publish:
+  provider: github
+  repo: sketchmidi2
+  owner: egoldsbo
+productName: SketchMIDI
+appId: dev.lotuz.SketchMIDI
+files:
+  - filter:
+      - dist/
+      - node_modules/
+      - app.html
+      - main.prod.js
+      - main.prod.js.map
+      - package.json
+dmg:
+  contents:
+    - x: 130
+      'y': 220
+    - x: 410
+      'y': 220
+      type: link
+      path: /Applications
+win:
+  target:
+    - msi
+linux:
+  target:
+    - deb
+    - rpm
+    - AppImage
+  category: Development
+electronVersion: 11.0.3
