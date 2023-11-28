@@ -25,6 +25,7 @@ dmg:
       path: /Applications
 win:
   target:
+    - nsis
     - msi
 linux:
   target:
