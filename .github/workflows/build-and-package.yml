@@ -1,9 +1,6 @@
 name: Build and Package Electron App
 
-on:
-  push:
-    branches:
-      - main  # Adjust as necessary.
+on: [push]
 
 jobs:
   build-windows:
