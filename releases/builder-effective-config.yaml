@@ -26,7 +26,8 @@ dmg:
 win:
   target:
     - nsis
-    - msi
+nsis:
+  artifactName: ${productName}.Setup.${version}.${ext}
 linux:
   target:
     - deb

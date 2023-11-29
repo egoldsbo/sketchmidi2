@@ -1,8 +1,8 @@
-version: 1.0.4
+version: 1.0.5
 files:
-  - url: SketchMIDI-Setup-1.0.4.exe
-    sha512: Urx3+RvMf/ThZx40pAuNOAPg9zfuDVpdNyUlNwVwf6gWmCIabex3F/Uj7A0a3iPxAaYyZqGofkTM/I89tHNn+A==
-    size: 60697723
-path: SketchMIDI-Setup-1.0.4.exe
-sha512: Urx3+RvMf/ThZx40pAuNOAPg9zfuDVpdNyUlNwVwf6gWmCIabex3F/Uj7A0a3iPxAaYyZqGofkTM/I89tHNn+A==
-releaseDate: '2023-11-28T07:21:28.866Z'
+  - url: SketchMIDI.Setup.1.0.5.exe
+    sha512: Se+twExzy6dgBdXLwS9lzui86M9C2aRwNYHr6LlbUPgi2MUq33GuZCs01cK60mC+RodrRbRL5yEwRiksfkoUSA==
+    size: 60698977
+path: SketchMIDI.Setup.1.0.5.exe
+sha512: Se+twExzy6dgBdXLwS9lzui86M9C2aRwNYHr6LlbUPgi2MUq33GuZCs01cK60mC+RodrRbRL5yEwRiksfkoUSA==
+releaseDate: '2023-11-29T05:57:47.754Z'
