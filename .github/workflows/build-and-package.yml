@@ -1,0 +1,39 @@
+name: Build and Package Electron App
+
+on:
+  push:
+    branches:
+      - main  # Adjust as necessary.
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.16.3'
+
+      - name: Set up Yarn
+        run: |
+          yarn set version 1.22.5
+          yarn --version
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '2.7.8'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build and Package for Windows
+        run: npm run package-win
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-app
+          path: ./releases/*.exe
