@@ -29,15 +29,8 @@ let appState: any = {};
 let swinger;
 var newtempo = 120;
 var newswing = 0;
-var newswinglast = 0;
-var newtempolast = 120;
 var midiClockTicks = -1;
-var tracknameindex=[];
-var currenttrackname = '1';
-var holdplayingnotes = []
 const START_TEMPO = 120;
-var noteoffflag=[];
-var noteoffflagchannel=[];
 var currenttrans=0;
 var newlyplayednotes=[];
 var midiclock=true;
@@ -46,9 +39,42 @@ export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.checkForUpdates();
+
+    autoUpdater.on('update-available', () => {
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Available',
+        message: 'A new version of SketchMIDI is available. Do you want to update now?',
+        buttons: ['Update', 'Later']
+      }).then((result) => {
+        if (result.response === 0) { // The user selected 'Update'
+          autoUpdater.downloadUpdate();
+        }
+      });
+    });
+
+    autoUpdater.on('update-not-available', () => {
+      console.log('Update not available');
+    });
+
+    autoUpdater.on('error', (err) => {
+      dialog.showErrorBox('Error: ', err == null ? "unknown" : (err.stack || err).toString());
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+      dialog.showMessageBox({
+        title: 'Install Updates',
+        message: 'Updates downloaded, application will be quit for update...'
+      }).then(() => {
+        setImmediate(() => autoUpdater.quitAndInstall());
+      });
+    });
   }
 }
+
+
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -110,6 +136,8 @@ const createWindow = async () => {
           preload: path.join(__dirname, 'dist/renderer.prod.js'),
         },
   });
+
+
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -174,17 +202,6 @@ const createWindow = async () => {
         trackplayingnotes,
       }
     ) => {
-
-
-      var eventempo = newtempo + (newtempo * newswing / 2);
-      var oddtempo = newtempo - (newtempo * newswing / 2);
-
-      if (column % 2 == 0) { swinger.setTempo(eventempo); }
-      if (column % 2 == 1) { swinger.setTempo(oddtempo); }
-      newswinglast = newswing;
-      newtempolast = newtempo;
-
-
 
 
       if (didMidiChange) {
@@ -305,9 +322,6 @@ const createWindow = async () => {
 
 
         if (!track.isMuted) {
-
-          //console.log("before playingNotes ",track.playingnotes);
-
           track.playingnotes =
             midiCallback({}, {
               beatScale,
@@ -328,24 +342,13 @@ const createWindow = async () => {
             });
 
 
-/*irshad
-            if(track.playingnotes.length==0){
-              //blinktracklabelon
-            } else{
-              //blinktracklabeloff
-            }
-*/
-
-//add newly played notes to currentlyplayingnotesarray
-
-
             newlyplayednotes=[];
 
         }
         mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingnotes:track.playingnotes});
         console.log(track.name,track.playingnotes);
-
       });
+
 
       counter++;
       counter = counter % 64;
@@ -353,8 +356,6 @@ const createWindow = async () => {
   }
 
   ipcMain.on('swingChange', (evt, { swing }) => {
-
-
     newswing = swing;
   });
 
@@ -472,15 +473,10 @@ var notestooff=trackz.playingnotes;
    console.log("poster",post);
   });
 
-  ipcMain.on('toggleMidiClock', (evt) => {
-    console.log("togglemidiclock");
-    if(midiclock==true){
-      midiclock=false;
-    }
-    else{
-      midiclock=true;
-    }
-   });
+  ipcMain.on('clock-switch-state', (event, newState) => {
+   midiclock=newState;
+   console.log('midiclock on/off:', midiclock);
+  });
 
   const note_map = [];
   for (let i = 0; i < 16; i++) {
@@ -705,9 +701,13 @@ var notestooff=trackz.playingnotes;
       evt.returnValue = { state: tracksState, filePath };
     });
   });
+
+
   ipcMain.on('stateStatusUpdate', (evt, { currentStateIsSaved }) => {
     stateIsSaved = currentStateIsSaved;
   });
+
+
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 

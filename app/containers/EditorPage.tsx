@@ -26,6 +26,7 @@ import {
   faQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Switch from '../components/switch';
 
 
 import {
@@ -97,7 +98,14 @@ const Label = styled.label`
 export default function EditorPage() {
 
 
+  const [clockSwitchState, setClockSwitchState] = useState(true);
 
+  const toggleClockSwitch = () => {
+    const newState = !clockSwitchState;
+    setClockSwitchState(newState);
+    // Send the updated state to the main process
+    ipcRenderer.send('clock-switch-state', newState);
+  };
 
   const dispatch = useDispatch();
   const store = useStore();
@@ -779,9 +787,13 @@ useEffect(() => {
                 inverse
                 showEmpty={false}
               />
-               <Button inverse onClick={toggleMidiClock}>
-                  Midiclock
-                </Button>
+              MIDI CLOCK OUT:
+              <Switch
+        isActive={clockSwitchState}
+        setIsActive={toggleClockSwitch} // Use the handler prop
+        on="Off"
+        off="On"
+      />
               <div style={{ display: 'flex' }}>
                 <Button inverse onClick={loadTracksFromFile}>
                   Load
