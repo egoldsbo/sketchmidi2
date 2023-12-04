@@ -687,7 +687,7 @@ useEffect(() => {
     <EditorNavbar
     tabs={tracks.map(track => ({
       ...track,
-      isBlink: track.playingnotes.some(note => note !== 0) && track.isMuted == 0 ? 1 : 0
+      isBlink: track.playingNotes.some(note => note !== 0) && track.isMuted == 0 ? 1 : 0
     }))}
       selectedTab={selectedTab}
       selectTab={selectTab}
