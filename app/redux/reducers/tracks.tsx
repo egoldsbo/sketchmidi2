@@ -357,7 +357,7 @@ export function editorReducer(state = initialTrackReducer, action: any) {
           if (track.name !== action.payload.trackName) {
               return track;
           }
-          return { ...track, playingnotes: action.payload.playingNotes };
+          return { ...track, playingnotes: action.payload.playingnotes };
       });
       return { ...state, tracks: updatedTracks, changesWereSaved: false };
 

@@ -121,7 +121,6 @@ const Tab = ({
   className,
   setIsMute,
   children,
-  isBlink,
   label = '',
   setLabel = () => {},
   removeTab = () => {},
@@ -194,7 +193,6 @@ const Tab = ({
 <Mute
   show={showIcon}
   onClick={onMute}
-  color={(isBlink && !isMuted) ? '#FFFFFF' : parsedColor.toString()}
 >
   <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
 </Mute>
@@ -212,7 +210,6 @@ Tab.defaultProps = {
   isMuted: false,
   showIcon: false,
   setIsMute: () => {},
-  isBlink: false,
 };
 
 Tab.propTypes = {
@@ -220,7 +217,6 @@ Tab.propTypes = {
   color: PropTypes.string,
   selectTab: PropTypes.func,
   highlight: PropTypes.bool,
-  isBlink: PropTypes.bool,
   isMuted: PropTypes.bool,
   showIcon: PropTypes.bool,
   style: PropTypes.object,

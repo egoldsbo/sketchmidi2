@@ -420,9 +420,9 @@ export default function EditorPage() {
     ipcRenderer.on('fileSaved', ({ filePath }) => {
       dispatch(saveTracks(filePath));
     });
-    ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingNotes})=>{
-      console.log("Playing Notes " + playingNotes)
-      dispatch(changePlayingNotes(trackName, playingNotes));
+    ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingnotes})=>{
+      console.log("Playing Notes " + playingnotes)
+      dispatch(changePlayingNotes(trackName, playingnotes));
     })
 
 
@@ -693,10 +693,7 @@ useEffect(() => {
 
   const navbar = (
     <EditorNavbar
-    tabs={tracks.map(track => ({
-      ...track,
-      isBlink: track.playingNotes.some(note => note !== 0) && track.isMuted == 0 ? 1 : 0
-    }))}
+      tabs={tracks}
       selectedTab={selectedTab}
       selectTab={selectTab}
       setIsMute={setTabMute}
