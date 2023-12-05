@@ -114,7 +114,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.on('close', function (e) {
-     if (!stateIsSaved) {
+   /*  if (!stateIsSaved) {
        const choice = dialog.showMessageBoxSync(this, {
          type: 'question',
          buttons: ['Yes', 'No'],
@@ -123,8 +123,8 @@ const createWindow = async () => {
        });
        if (choice === 1) {
          e.preventDefault();
-       }
-     }
+       }*/
+
 
     for (var i = 0; i < 16; i++) {
       for (var j = 0; j < 127; j++) {
@@ -176,15 +176,11 @@ const createWindow = async () => {
     ) => {
 
 
-      var eventempo = newtempo + (newtempo * newswing / 2);
-      var oddtempo = newtempo - (newtempo * newswing / 2);
 
-      if (column % 2 == 0) { swinger.setTempo(eventempo); }
-      if (column % 2 == 1) { swinger.setTempo(oddtempo); }
-      newswinglast = newswing;
-      newtempolast = newtempo;
-
-
+if(newtempo!=newtempolast){
+swinger.setTempo(newtempo);
+newtempolast=newtempo;
+}
 
 
       if (didMidiChange) {
@@ -232,8 +228,11 @@ const createWindow = async () => {
             velocity: 0,
             channel,
           });
+          let index = trackplayingnotes.indexOf(previousMidiNote);
+          if (index !== -1) {
+            trackplayingnotes.splice(index, 1);
+          }
 
-          trackplayingnotes[i] = 0;
           note_map[channel][previousMidiNote] = false;
 
         }
@@ -246,8 +245,10 @@ const createWindow = async () => {
               velocity: 127,
               channel,
             });
-            newlyplayednotes.push(midiNote);
-            trackplayingnotes[i] = midiNote;
+            if (!trackplayingnotes.includes(midiNote)) {
+               trackplayingnotes.push(midiNote);
+               console.log("notepushed",trackplayingnotes);
+          }
             note_map[channel][midiNote] = true;
           }
         }
@@ -298,7 +299,7 @@ const createWindow = async () => {
           track.playingMode === PLAYING_MODE.PATTERN ? col : col % 16;
 
 
-
+          if(isMidihangActive.includes(track.name)==false){
 
         if (!track.isMuted) {
 
@@ -323,33 +324,12 @@ const createWindow = async () => {
 
             });
 
-
-/*irshad
-            if(track.playingnotes.length==0){
-              //blinktracklabelon
-            } else{
-              //blinktracklabeloff
-            }
-*/
-
-//add newly played notes to currentlyplayingnotesarray
-
-            if(lastnotes.has(track.name)==false){
-                lastnotes.set(track.name,[]);
-            }
-            var somethingarray =lastnotes.get(track.name);
-            for(var i=0;i<newlyplayednotes.length;i++){
-                if(somethingarray.includes(newlyplayednotes[i])==false){
-                    somethingarray.push(newlyplayednotes[i]);
-                }
-            }
-
-            lastnotes.set(track.name,somethingarray);
-            newlyplayednotes=[];
-
         }
+
+
         mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:track.playingnotes});
-        console.log(track.name,track.playingnotes);
+        console.log(track.name,track.playingnotes);}
+        else{console.log("midihangactive");}
 
       });
 
@@ -429,11 +409,40 @@ const createWindow = async () => {
   });
 
 
-
+  let isMidihangActive = [];
 
   ipcMain.on('midihang', (evt, { trackz }) => {
-var notestooff=lastnotes.get(trackz.name);
-console.log("midihang",trackz,notestooff);
+    if (!isMidihangActive.includes(trackz.name)) {
+      isMidihangActive.push(trackz.name);
+  }
+
+    const notestooff = trackz.playingnotes;
+
+    // Create a new array that excludes the notes we are turning off
+    const updatedPlayingNotes = notestooff.filter(note => {
+      output.send('noteoff', {
+        note: note,
+        velocity: 0,
+        channel: trackz.channel,
+      });
+      return false;
+    });
+    console.log("midihang", trackz.name, updatedPlayingNotes);
+    mainWindow.webContents.send('savePlayingNotes', { trackName: trackz.name, playingNotes: updatedPlayingNotes });
+    ipcMain.once('playingNotesUpdated', () => {
+      console.log("playingNotesUpdated", trackz.playingnotes);
+      let index = isMidihangActive.indexOf(trackz.name);
+   if (index !== -1) {
+    isMidihangActive.splice(index, 1);
+}
+  });
+
+  });
+
+
+  ipcMain.on('midihangtrans', (evt, { trackz,transindex }) => {
+    if(transindex==currenttrans){
+    var notestooff=trackz.playingnotes;
 
   for(var i=0;i<notestooff.length;i++){
      output.send('noteoff', {
@@ -441,30 +450,14 @@ console.log("midihang",trackz,notestooff);
       velocity: 0,
       channel: trackz.channel,
   });
-lastnotes.set(trackz.name,[]);
+  let index = trackz.playingnotes.indexOf(notestooff[i]);
+  if (index !== -1) {
+    trackz.playingnotes.splice(index, 1);
   }
-  trackz.playingnotes=[];
-  mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
-  });
-
-
-  ipcMain.on('midihangtrans', (evt, { trackz,transindex }) => {
-    if(transindex==currenttrans){
-    var notestooff=lastnotes.get(trackz.name);
-    console.log("midihang",trackz,notestooff);
-
-      for(var i=0;i<notestooff.length;i++){
-         output.send('noteoff', {
-          note: notestooff[i],
-          velocity: 0,
-          channel: trackz.channel,
-      });
-    lastnotes.set(trackz.name,[]);
-      }
-      trackz.playingnotes=[];
-      mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
-    }
-      });
+  }
+console.log("midihangtrans",trackz.name,trackz.playingnotes);
+mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:trackz.playingnotes});
+ } });
 
       ipcMain.on('tempoChange', (evt, { tempo }) => {
     newtempo = tempo;
@@ -514,6 +507,7 @@ lastnotes.set(trackz.name,[]);
         extra,
       }
     ) => {
+      console.log("note_draw");
       let lastI = notes.length - 1;
       const { sx, ex, y, currentTrack, currentPattern } = extra;
 
@@ -530,13 +524,20 @@ lastnotes.set(trackz.name,[]);
             octave * 12,
             transposition + scaleType + (lastI - y)
           ) + key, 0, 127);
+          let index = currentTrack.playingnotes.indexOf(midiNote);
+          if (index !== -1) {
+            currentTrack.playingnotes.splice(index, 1);
+
 
           output.send('noteoff', {
             note: midiNote,
-            velocity: 127,
+            velocity: 0,
             channel,
           });
+          mainWindow.webContents.send('savePlayingNotes', { trackName:currentTrack.name, playingNotes:currentTrack.playingnotes});
+          console.log("notedraw",currentTrack.name,currentTrack.playingnotes);
 
+        }
           // console.log(note_map[channel], midiNote);
           note_map[channel][midiNote] = false;
         }
@@ -564,8 +565,11 @@ lastnotes.set(trackz.name,[]);
         currenttrack,
       }
     ) => {
+
+      /*
       let lastI = notes.length - 1;
       //didMidiChange = true;
+      console.log("midichange");
 
       notes.forEach((note, i) => {
         const previousNote = previousNotes[i];
@@ -594,9 +598,8 @@ lastnotes.set(trackz.name,[]);
 
         note_map[channel][midiNote] = false;
 
-      });
-    }
-  );
+      });*/
+    });
 
   ipcMain.on(
     'midi',

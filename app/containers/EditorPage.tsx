@@ -423,6 +423,7 @@ export default function EditorPage() {
     ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingNotes})=>{
       console.log("Playing Notes " + playingNotes)
       dispatch(changePlayingNotes(trackName, playingNotes));
+      ipcRenderer.send('playingNotesUpdated');
     })
 
 
@@ -496,11 +497,16 @@ useEffect(() => {
 
 
 
-  const onUpdatingLogic= useCallback(
+  const onUpdating = useCallback(
     ({ x, y, event }) => {
-      //ipcRenderer.send('poster', {post:"ping"});
-      setLastUpdatedCell({ x, y });
       if (!isUpdating) return;
+
+      setLastUpdatedCell({ x, y });
+
+
+      // Function to execute the update logic
+      const executeUpdate = () => {
+        ipcRenderer.send('poster', {post:"ontupdating"});
 
       let notes = cloneMatrix(currentNotes);
       let startX = isUpdating.cell.x;
@@ -524,13 +530,16 @@ useEffect(() => {
       }
 
       setTemporaryNotes(notes);
+      };
+      // Debounce logic
+      clearTimeout(isUpdating.timeoutId);
+      isUpdating.timeoutId = setTimeout(executeUpdate, 40);
     },
     [isUpdating, lastUpdatedCell, temporaryNotes]
   );
-
-  const onUpdating = debounce(onUpdatingLogic, 50);
 //irshad
   const stopUpdating = ({ x, y}) => {
+    ipcRenderer.send('poster', {post:"stopupdating"});
     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
       const startCell = isUpdating.cell;
       const startX = Math.min(startCell.x, lastUpdatedCell.x);
@@ -562,8 +571,9 @@ useEffect(() => {
     }
 
     dispatch(updateSelectedSection(i));
+  }, [currentTrack]);
 
-  }, [currentTrack.playingMode]);
+
 
   const clearSectionMeasure = () => {
     ipcRenderer.send('midihang', {trackz:currentTrack});
