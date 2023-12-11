@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
 import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch, useStore } from 'react-redux';
@@ -61,6 +61,25 @@ import {
 
 import { cloneMatrix } from '../redux/reducers/tracks';
 
+function onRender(
+
+  id, // the "id" prop of the Profiler tree that has just committed
+  phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
+  actualDuration, // time spent rendering the committed update
+  baseDuration, // estimated time to render the entire subtree without memoization
+  startTime, // when React began rendering this update
+  commitTime, // when React committed this update
+  interactions // the Set of interactions belonging to this update
+) {
+ // ipcRenderer.send('poster', {post:'id:'});
+ // ipcRenderer.send('poster', {post:id});
+ // ipcRenderer.send('poster', {post:'actualDuration:'});
+ // ipcRenderer.send('poster', {post:actualDuration});
+ // ipcRenderer.send('poster', {post:'baseDuration:'});
+ // ipcRenderer.send('poster', {post:baseDuration});
+
+}
+
 function debounce(func, wait) {
   let timeout;
   return function(...args) {
@@ -95,7 +114,29 @@ const Label = styled.label`
   margin-right: 8px;
 `;
 
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
 export default function EditorPage() {
+
+    const tracks = useSelector((state) => state.editor.tracks);
+    const prevTracks = usePrevious(tracks);
+
+    useEffect(() => {
+      if (prevTracks) {
+        tracks.forEach((track, index) => {
+          const prevTrack = prevTracks[index];
+          if (prevTrack && JSON.stringify(track.playingnotes) !== JSON.stringify(prevTrack.playingnotes)) {
+            console.log(`Track ${index + 1} playingnotes changed:`, track.playingnotes);
+          }
+        });
+      }
+    }, [tracks]);
 
 
   const [clockSwitchState, setClockSwitchState] = useState(true);
@@ -131,7 +172,6 @@ export default function EditorPage() {
     scaleType: masterScaleType,
     activeTrack: selectedTab,
     currentPattern,
-    tracks,
     changesWereSaved: currentStateIsSaved,
     transpositions: allTranspositions,
   } = stateToSave;
@@ -421,7 +461,7 @@ export default function EditorPage() {
       dispatch(saveTracks(filePath));
     });
     ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingNotes})=>{
-      console.log("Playing Notes " + playingNotes)
+      //console.log("Playing Notes " + playingNotes)
       dispatch(changePlayingNotes(trackName, playingNotes));
       ipcRenderer.send('playingNotesUpdated');
     })
@@ -506,7 +546,6 @@ useEffect(() => {
 
       // Function to execute the update logic
       const executeUpdate = () => {
-        ipcRenderer.send('poster', {post:"ontupdating"});
 
       let notes = cloneMatrix(currentNotes);
       let startX = isUpdating.cell.x;
@@ -663,7 +702,9 @@ useEffect(() => {
   };
 
   const changePatternUp = () => {
-  ipcRenderer.send('midihang', {trackz:currentTrack});
+    for(var j=0;j<tracks.length;j++){
+  ipcRenderer.send('midihang', {trackz:tracks[j]});
+    }
     if (currentPattern < 3) {
       notesHaveChanged(false);
       dispatch(updateSelectedPattern(currentPattern + 1));
@@ -671,7 +712,9 @@ useEffect(() => {
   };
 
   const changePatternDown = () => {
-    ipcRenderer.send('midihang', {trackz:currentTrack});
+    for(var j=0;j<tracks.length;j++){
+      ipcRenderer.send('midihang', {trackz:tracks[j]});
+        }
     if (currentPattern > 0) {
       notesHaveChanged(false);
       dispatch(updateSelectedPattern(currentPattern - 1));
@@ -725,6 +768,7 @@ useEffect(() => {
       navbar={navbar}
       main={
         <div style={{ width: '100%', height: '100%', display: 'flex' }}>
+          <React.Profiler id="StepSequencer" onRender={onRender}>
           <StepSequencer
             highlighted={
               //irshad
@@ -744,6 +788,7 @@ useEffect(() => {
             startCell={isUpdating && isUpdating.cell}
             finalCell={lastUpdatedCell}
           />
+          </React.Profiler>
           <HelpModal
             isOpen={isHelpOpen}
             closeModal={() => setIsHelpOpen(false)}

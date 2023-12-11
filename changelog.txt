@@ -1,5 +1,21 @@
 version 1.1.6
 
+reverted to
+tracking playing notes in main.dev. still need to double check all instances of note off.
+need to reenable blinker
+remove unused bit of code and new prop for blinker?
+double check counterdebounce
+double check tempo changes
+what is note draw and midi change doing?
+pop up warning when no midiport created
+drawing note weirdness?
+check save/load
+stop sequencer when dialog pops up
+reset colum highlighter on "stop"
+autoadjust from 8 to 16.
+
+
+
 improved note off
 changed noteons to note off 0
 added port dialog
@@ -13,3 +29,8 @@ more clear indicator of when section is updated
 
 known bugs
 drag left off screen bug
+
+
+changed patternup aand down to turn off notes on all tracks
+
+todo: change the debounce to only include the rendering of the notes
