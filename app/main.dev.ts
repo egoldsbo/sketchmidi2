@@ -18,20 +18,18 @@ import fs from 'fs';
 import { PLAYING_MODE, TRACK_MODE } from './constants/modes';
 import clamp from './utils/clamp';
 import transpose from './utils/transpose';
-import Swinger from './utils/swinger';
+import { Worker,parentPort } from 'worker_threads';
 
 
 let didMidiChange = false;
 let appState: any = {};
-let swinger;
-var newtempo = 120;
-var newtempolast = 120;
-var midiClockTicks = -1;
-const START_TEMPO = 120;
+let timer = new Worker('./app/webtimer.js');
 var currenttrans=0;
 var playingNotes={};
+var playingNotesLast={};
 var midiclock=true;
-
+var timelast=0;
+var Tempo=120;
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -78,7 +76,7 @@ app.whenReady().then(async () => {
   ) {
     await session.defaultSession.loadExtension("/home/otho/.config/Electron/extensions/fmkadmapgofadopljbjfkapdkoienihi");
 
-    // installExtensions();
+     //installExtensions();
   }
 });
 
@@ -164,15 +162,6 @@ const createWindow = async () => {
         trackplayingnotes,
       }
     ) => {
-
-
-
-if(newtempo!=newtempolast){
-swinger.setTempo(newtempo);
-newtempolast=newtempo;
-}
-
-
       if (didMidiChange) {
         didMidiChange = false;
         return trackplayingnotes;
@@ -222,7 +211,7 @@ newtempolast=newtempo;
           let index = playingNotes[name].indexOf(previousMidiNote);
           if (index !== -1) {
             playingNotes[name].splice(index, 1);
-            console.log(name,playingNotes[name]);
+            //console.log(name,playingNotes[name]);
           }
 
 
@@ -240,7 +229,7 @@ newtempolast=newtempo;
             });
             if (!playingNotes[name].includes(midiNote)) {
                  playingNotes[name].push(midiNote);
-                 console.log(name,playingNotes[name]);
+                 //console.log(name,playingNotes[name]);
           }
             note_map[channel][midiNote] = true;
           }
@@ -252,18 +241,20 @@ newtempolast=newtempo;
 
     }
 
+timer.on('message', (message) => {
+  if (message === 'clocktick') {
+    output.send('clock');
+  }
+
+  if (message === 'notetick') {
+    midiTimerCallback();
+  }
+});
+
   let counter = 0;
   const midiTimerCallback = () => {
-
-    midiClockTicks++;
-    if(midiclock==true){
-    output.send('clock');
-
-    }
-    midiClockTicks = midiClockTicks % 6;
-    if (midiClockTicks == 0) {
-
-
+  //console.log(Date.now()-timelast,"expected: ",(60000/Tempo));
+  //timelast=Date.now();
       const col = counter;
       mainWindow.webContents.send('tick', { col: counter });
 
@@ -314,36 +305,25 @@ newtempolast=newtempo;
               trackplayingnotes: track.playingnotes,
 
             });
+
+        if(playingNotes[track.name]!=playingNotesLast[track.name]){
+           mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:playingNotes[track.name]});
+          }
+          playingNotesLast[track.name]=playingNotes[track.name];
         }
-      });
+
+          });
+
       counter++;
       counter = counter % 64;
-    }
+
   }
-
-  ipcMain.on('swingChange', (evt, { swing }) => {
-
-
-    newswing = swing;
-  });
-
-  //tracks[1].sections[A].patterns[2].cell[0][0]
-  swinger = new Swinger(midiTimerCallback, START_TEMPO, 0);
 
   const outputName = 'SketchMIDI'.toLowerCase();
 
   let output;
 
   var deviceNotFound = true;
-
-
-
-
-
-
-
-
-
 
 
     let allOutputs = easymidi.getOutputs();
@@ -383,7 +363,7 @@ newtempolast=newtempo;
     counter = 0;
     if(midiclock==true){
     output.send('start');}
-    swinger.start();
+    timer.postMessage('start');
 
   });
 
@@ -391,17 +371,8 @@ newtempolast=newtempo;
     counter = 0;
     if(midiclock==true){
     output.send('stop');}
-    midiClockTicks = -1;
-    swinger.stop();
+    timer.postMessage('stop');
     });
-
-  ipcMain.on('currenttrackname', (evt, { currenttrackName }) => {
-    currenttrackname = currenttrackName;
-    //console.log(currenttrackname);
-  });
-
-
-
 
   ipcMain.on('midihang', (evt, { trackz }) => {
     if(!(trackz.name in playingNotes)){
@@ -419,7 +390,7 @@ newtempolast=newtempo;
       }
     }
 
-    console.log(trackz.name,playingNotes[trackz.name]);
+    //console.log(trackz.name,playingNotes[trackz.name]);
     mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:playingNotes[trackz.name]});
 
     });
@@ -443,15 +414,12 @@ newtempolast=newtempo;
           playingNotes[trackz.name].splice(index, 1);
         }
       }
-
-      console.log(trackz.name,playingNotes[trackz.name]);
       mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:playingNotes[trackz.name]});
-
  } });
 
-      ipcMain.on('tempoChange', (evt, { tempo }) => {
-    newtempo = tempo;
-    console.log("tempo",newtempo);
+    ipcMain.on('tempoChange', (evt, { tempo }) => {
+    timer.postMessage({ type: 'setBpm', value: tempo });
+    Tempo=tempo;
   });
 
   ipcMain.on('poster', (evt, { post }) => {
@@ -460,7 +428,6 @@ newtempolast=newtempo;
 
   ipcMain.on('clock-switch-state', (event, newState) => {
    midiclock=newState;
-   console.log('midiclock on/off:', midiclock);
   });
 
   const note_map = [];
@@ -497,19 +464,23 @@ newtempolast=newtempo;
         extra,
       }
     ) => {
-      console.log("note_draw");
       let lastI = notes.length - 1;
       const { sx, ex, y, currentTrack, currentPattern } = extra;
 
       const pattern = currentTrack.patterns[currentPattern];
       const section = pattern[currentTrack.currentSection].notes;
 
+      if(!(currentTrack.name in playingNotes)){
+        playingNotes[currentTrack.name]=[];
+      }
+
+
 
       let midiNote;
       let transposition = transpositions[Math.floor(realCol / 16)];
       for (let i = sx; i <= ex; i++) {
         if (section[i][y] == 0) {
-          console.log(octave, transposition, scaleType, lastI - y, key);
+          //console.log(octave, transposition, scaleType, lastI - y, key);
           midiNote = clamp(transpose(
             octave * 12,
             transposition + scaleType + (lastI - y)
@@ -527,8 +498,8 @@ newtempolast=newtempo;
             velocity: 0,
             channel,
           });
-          console.log('notedraw',currentTrack.name,playingNotes[currentTrack.name]);
-          mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:playingNotes[currentTrack.name]});
+          //console.log('notedraw',currentTrack.name,playingNotes[currentTrack.name]);
+          mainWindow.webContents.send('savePlayingNotes', { trackName:currentTrack.name, playingNotes:playingNotes[currentTrack.name]});
 
         }
 
@@ -546,7 +517,7 @@ newtempolast=newtempo;
       {
         notes,
         previousNotes,
-        column,
+
         realCol,
         octave,
         key,
@@ -555,8 +526,6 @@ newtempolast=newtempo;
         channel,
         beatScale,
         playingMode,
-        turnOn,
-        currenttrack,
       }
     ) => {
 
@@ -599,8 +568,6 @@ newtempolast=newtempo;
     'midi',
     midiCallback
   );
-
-
 
   ipcMain.on('panic', (evt, tracks) => {
     // console.log(note_map.flat(3).filter(e => e).length);
@@ -648,6 +615,10 @@ newtempolast=newtempo;
   });
 
   ipcMain.on('changeMode', (evt, { mode, newMode }) => {
+    counter = 0;
+    if(midiclock==true){
+    output.send('stop');}
+    timer.postMessage('stop');
     const choice = dialog.showMessageBox(this, {
       type: 'question',
       buttons: ['Yes', 'No'],
@@ -660,6 +631,11 @@ newtempolast=newtempo;
   });
 
   ipcMain.on('changeRows', (evt, { rows, newRows }) => {
+    counter = 0;
+    if(midiclock==true){
+    output.send('stop');}
+    midiClockTicks = -1;
+    timer.stop();
     const choice = dialog.showMessageBoxSync(this, {
       type: 'question',
       buttons: ['Yes', 'No'],

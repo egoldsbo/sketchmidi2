@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef } from 'react';
+import React, {useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch, useStore } from 'react-redux';
@@ -80,14 +80,17 @@ function onRender(
 
 }
 
-function debounce(func, wait) {
-  let timeout;
-  return function(...args) {
-    const context = this;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
+function debounce(func, delay) {
+  let inDebounce;
+  return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(inDebounce);
+      inDebounce = setTimeout(() => func.apply(context, args), delay);
   };
 }
+
+
 
 const MAX_TABS = 16;
 
@@ -295,6 +298,9 @@ export default function EditorPage() {
   };
 
   const onChangeBeatScale = (i: number) => (beat: string) => {
+    for(var j=0;j<tracks.length;j++){
+      ipcRenderer.send('midihang', {trackz:tracks[j]});
+        }
     notesHaveChanged(false);
     dispatch(changeBeatScale(i, parseInt(beat, 10)));
   };
@@ -509,43 +515,40 @@ export default function EditorPage() {
   const onHelpOpen = () => setIsHelpOpen(!isHelpOpen);
 //irshad
 const handleMouseLeave = (event) => {
- if(event.clientX<0||event.clientY<0||event.clientX>window.innerWidth||event.clientY>window.innerHeight){
-    setIsUpdating(false);
-    setLastUpdatedCell(false);
- }
-};
-useEffect(() => {
-  window.addEventListener('mouseup', handleMouseLeave);
-  return () => {
-      window.removeEventListener('mouseup', handleMouseLeave);
-  };
-}, []);
+  if(event.clientX<0||event.clientY<0||event.clientX>window.innerWidth||event.clientY>window.innerHeight){
+     setIsUpdating(false);
+     setLastUpdatedCell(false);
+  }
+ };
+ useEffect(() => {
+   window.addEventListener('mouseup', handleMouseLeave);
+   return () => {
+       window.removeEventListener('mouseup', handleMouseLeave);
+   };
+ }, []);
 
-  const startUpdating = useCallback(
+   const startUpdating = useCallback(
 
 
-    ({ x, y, event }) => {
-      // console.log(x, y);
-      let notes = cloneMatrix(currentNotes);
-      notes[x][y] = 1 + 6;
-      setTemporaryNotes(notes);
-      setIsUpdating({ x: event.clientX, cell: { x, y } });
-      setLastUpdatedCell({ x, y });
-    },
-    [isUpdating, lastUpdatedCell, temporaryNotes, currentNotes]
-  );
+     ({ x, y, event }) => {
+       // console.log(x, y);
+       let notes = cloneMatrix(currentNotes);
+       notes[x][y] = 1 + 6;
+       setTemporaryNotes(notes);
+       setIsUpdating({ x: event.clientX, cell: { x, y } });
+       setLastUpdatedCell({ x, y });
+     },
+     [isUpdating, lastUpdatedCell, temporaryNotes, currentNotes]
+   );
 
+   const debouncedSetTemporaryNotes = useMemo(() => debounce(setTemporaryNotes, 50), [setTemporaryNotes]);
 
 
   const onUpdating = useCallback(
     ({ x, y, event }) => {
-      if (!isUpdating) return;
 
       setLastUpdatedCell({ x, y });
-
-
-      // Function to execute the update logic
-      const executeUpdate = () => {
+      if (!isUpdating) return;
 
       let notes = cloneMatrix(currentNotes);
       let startX = isUpdating.cell.x;
@@ -568,38 +571,34 @@ useEffect(() => {
         }
       }
 
-      setTemporaryNotes(notes);
-      };
-      // Debounce logic
-      clearTimeout(isUpdating.timeoutId);
-      isUpdating.timeoutId = setTimeout(executeUpdate, 40);
+      debouncedSetTemporaryNotes(notes);
     },
-    [isUpdating, lastUpdatedCell, temporaryNotes]
+    [isUpdating, lastUpdatedCell, temporaryNotes, debouncedSetTemporaryNotes]
   );
-//irshad
-  const stopUpdating = ({ x, y}) => {
-    ipcRenderer.send('poster', {post:"stopupdating"});
-    if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
-      const startCell = isUpdating.cell;
-      const startX = Math.min(startCell.x, lastUpdatedCell.x);
-      const finalX = Math.max(startCell.x, lastUpdatedCell.x);
+ //irshad
+   const stopUpdating = ({ x, y}) => {
+   // debouncedSetTemporaryNotes.flush();
+     if (isUpdating && typeof x !== 'undefined' && typeof y !== 'undefined') {
+       const startCell = isUpdating.cell;
+       const startX = Math.min(startCell.x, lastUpdatedCell.x);
+       const finalX = Math.max(startCell.x, lastUpdatedCell.x);
 
-      dispatch(updateTrackNote(startCell, lastUpdatedCell));
+       dispatch(updateTrackNote(startCell, lastUpdatedCell));
 
-      // get new state to send to node
-      const newState = store.getState();
-      let currentTrack = newState.editor.tracks[selectedTab];
-      notesHaveChanged(false, 'note_draw', {
-        sx: startX,
-        ex: finalX,
-        y: lastUpdatedCell.y,
-        currentTrack,
-        currentPattern
-      });
-    }
-    setIsUpdating(false);
-    setLastUpdatedCell(false);
-  };
+       // get new state to send to node
+       const newState = store.getState();
+       let currentTrack = newState.editor.tracks[selectedTab];
+       notesHaveChanged(false, 'note_draw', {
+         sx: startX,
+         ex: finalX,
+         y: lastUpdatedCell.y,
+         currentTrack,
+         currentPattern
+       });
+     }
+     setIsUpdating(false);
+     setLastUpdatedCell(false);
+   };
 
   const onSectionClick = useCallback((i: number) => (event: any) => {
 
@@ -627,6 +626,9 @@ useEffect(() => {
   };
 
   const onChangeScaleType = (v) => {
+    for(var j=0;j<tracks.length;j++){
+      ipcRenderer.send('midihang', {trackz:tracks[j]});
+        }
 
 
     if (typeof v === 'string') {

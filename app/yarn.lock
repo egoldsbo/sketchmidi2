@@ -14,7 +14,7 @@
   "resolved" "https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.15.0.tgz"
   "version" "7.15.0"
 
-"@babel/core@^7.12.10":
+"@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.12.10":
   "integrity" "sha512-tXtmTminrze5HEUPn/a0JtOzzfp0nk+UEXQ/tqIJo3WDGypl/2OFQEMll/zSFU8f/lfmfLXvTaORHF3cfXIQMw=="
   "resolved" "https://registry.npmjs.org/@babel/core/-/core-7.15.0.tgz"
   "version" "7.15.0"
@@ -180,6 +180,13 @@
     "pirates" "^4.0.0"
     "source-map-support" "^0.5.16"
 
+"@babel/runtime@^7.23.5", "@babel/runtime@^7.23.6":
+  "integrity" "sha512-zHd0eUrf5GZoOWVCXp6koAKQTfZV07eit6bGPmJgnZdnSAvvZee6zniW2XMF7Cmc4ISOOnPy3QaSiIJGJkVEDQ=="
+  "resolved" "https://registry.npmjs.org/@babel/runtime/-/runtime-7.23.6.tgz"
+  "version" "7.23.6"
+  dependencies:
+    "regenerator-runtime" "^0.14.0"
+
 "@babel/template@^7.14.5":
   "integrity" "sha512-6Z3Po85sfxRGachLULUhOmvAaOo7xCvqGQtxINai2mEGPFm6pQ4z5QInFnUrRpfoSV60BnjyF5F3c+15fxFV1g=="
   "resolved" "https://registry.npmjs.org/@babel/template/-/template-7.14.5.tgz"
@@ -322,6 +329,14 @@
   "integrity" "sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ="
   "resolved" "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
   "version" "1.0.5"
+
+"fast-unique-numbers@^8.0.12":
+  "integrity" "sha512-Z4AJueNDnuC/sLxeQqrHP4zgqcBIeQQLbQ0hEx1a7m6Wf7ERrdAyR7CkGfoEFWm9Qla7dpLt0eWPyiO18gqj0A=="
+  "resolved" "https://registry.npmjs.org/fast-unique-numbers/-/fast-unique-numbers-8.0.12.tgz"
+  "version" "8.0.12"
+  dependencies:
+    "@babel/runtime" "^7.23.5"
+    "tslib" "^2.6.2"
 
 "file-uri-to-path@1.0.0":
   "integrity" "sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw=="
@@ -485,6 +500,11 @@
   dependencies:
     "find-up" "^3.0.0"
 
+"regenerator-runtime@^0.14.0":
+  "integrity" "sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw=="
+  "resolved" "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.14.1.tgz"
+  "version" "0.14.1"
+
 "safe-buffer@~5.1.1":
   "integrity" "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g=="
   "resolved" "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz"
@@ -536,3 +556,36 @@
   "integrity" "sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4="
   "resolved" "https://registry.npmjs.org/to-fast-properties/-/to-fast-properties-2.0.0.tgz"
   "version" "2.0.0"
+
+"tslib@^2.6.2":
+  "integrity" "sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q=="
+  "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
+  "version" "2.6.2"
+
+"worker-timers-broker@^6.0.100":
+  "integrity" "sha512-sXF1NpuT+FlJvONSbdZ6wNB15oNGg/P6PvCZDMHWmI6s7bHEb0zQ7cTnk9k+96/3pd8SpbXFuM0/HcHVc2alDQ=="
+  "resolved" "https://registry.npmjs.org/worker-timers-broker/-/worker-timers-broker-6.0.100.tgz"
+  "version" "6.0.100"
+  dependencies:
+    "@babel/runtime" "^7.23.6"
+    "fast-unique-numbers" "^8.0.12"
+    "tslib" "^2.6.2"
+    "worker-timers-worker" "^7.0.64"
+
+"worker-timers-worker@^7.0.64":
+  "integrity" "sha512-bzBO7rVibSYFKu5NBYfjKBKHujaA/AJzJTuEEqaOGfzcTdJv15raDuGhtDoMjcNPvt3IylfLph6AK92kuifnXA=="
+  "resolved" "https://registry.npmjs.org/worker-timers-worker/-/worker-timers-worker-7.0.64.tgz"
+  "version" "7.0.64"
+  dependencies:
+    "@babel/runtime" "^7.23.6"
+    "tslib" "^2.6.2"
+
+"worker-timers@^7.0.80":
+  "integrity" "sha512-bYSAPNVR0Nrm7hTM3hQOxM3x+D9dXFG6kZ0BBqFyRu0BUGC5+DLLK5Sx281hCaNzOGMNcUMEaoeErx3Yuf7XIw=="
+  "resolved" "https://registry.npmjs.org/worker-timers/-/worker-timers-7.0.80.tgz"
+  "version" "7.0.80"
+  dependencies:
+    "@babel/runtime" "^7.23.6"
+    "tslib" "^2.6.2"
+    "worker-timers-broker" "^6.0.100"
+    "worker-timers-worker" "^7.0.64"

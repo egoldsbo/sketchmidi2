@@ -2,17 +2,16 @@ version 1.1.6
 
 reverted to
 tracking playing notes in main.dev. still need to double check all instances of note off.
-need to reenable blinker
+
 remove unused bit of code and new prop for blinker?
 double check counterdebounce
-double check tempo changes
-what is note draw and midi change doing?
-pop up warning when no midiport created
+what is midi change doing?
+pop up warning when no midiport created/ improve create port
 drawing note weirdness?
 check save/load
-stop sequencer when dialog pops up
 reset colum highlighter on "stop"
 autoadjust from 8 to 16.
+
 
 
 
@@ -21,16 +20,24 @@ changed noteons to note off 0
 added port dialog
 
 todo:
-flashing tabs on and off
-remove  swing and prob controls
-highlighter should not occur on the main grid when in section mode
 more clear indicator of when section is updated
+update menus/documentation
+update dependencies/python3
+renametracks weird behavior (should delete entry upon typing)
+make blink flash on new note
+move scale options to main
+onmute hangs (maybe because of shortcut)
+note hangs on remove tab?
+saving and canceling save freezes screen.
+change aoliean to minor
 
 
-known bugs
-drag left off screen bug
+
+known bugs:
+lag in step indicator when drawing notes
+opening menus messes up shortcuts
+note hangs on scale change?
 
 
-changed patternup aand down to turn off notes on all tracks
 
-todo: change the debounce to only include the rendering of the notes
+
