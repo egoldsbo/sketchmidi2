@@ -1,25 +1,14 @@
 version 1.1.6
 
-reverted to
-tracking playing notes in main.dev. still need to double check all instances of note off.
+moved scale to main
+changed aolian to minor
+changed select backround/still need more adjustment
 
-remove unused bit of code and new prop for blinker?
-double check counterdebounce
-what is midi change doing?
-pop up warning when no midiport created/ improve create port
-drawing note weirdness?
-check save/load
-reset colum highlighter on "stop"
-autoadjust from 8 to 16.
-
-
-
-
-improved note off
-changed noteons to note off 0
-added port dialog
+toptodo:
+prompt to update
 
 todo:
+improve port behavior
 more clear indicator of when section is updated
 update menus/documentation
 update dependencies/python3
@@ -29,8 +18,15 @@ move scale options to main
 onmute hangs (maybe because of shortcut)
 note hangs on remove tab?
 saving and canceling save freezes screen.
-change aoliean to minor
-
+prompt to update
+remove unused bit of code and new prop for blinker?
+double check counterdebounce
+what is midi change doing?
+pop up warning when no midiport created/ improve create port
+drawing note weirdness?
+check save/load
+reset colum highlighter on "stop"
+autoadjust from 8 to 16.
 
 
 known bugs:

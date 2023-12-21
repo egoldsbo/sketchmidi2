@@ -29,7 +29,7 @@ export const SCALE_TYPE = {
   DORIAN: 1,
   PHYRIGIAN: 2,
   LYDIAN: 3,
-  AOLIEN: 4,
+  MINOR: 4,
   MYXILOADIAN: 5,
   LOCRIAN: 6,
 }

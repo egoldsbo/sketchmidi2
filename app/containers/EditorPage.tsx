@@ -338,18 +338,7 @@ export default function EditorPage() {
 
   };
 
-  const changeSwingOnTone = (newSwing: number | string) => {
-    let swing: number;
 
-    if (typeof newSwing === 'string') {
-      swing = parseInt(newSwing, 10);
-    } else {
-      swing = newSwing;
-    }
-
-    dispatch(changeSwing(swing / 100));
-    ipcRenderer.send('swingChange', { swing: swing / 100 });
-  };
 
   const toggleIsPlaying = () => {
     setIsPlaying((isPlaying) => {
@@ -401,20 +390,32 @@ export default function EditorPage() {
   }, [sectionToCopy, currentTrack]);
 
   const onShiftDelShortcut = useCallback(() => {
+    tracks.forEach((track, t) => {
+      ipcRenderer.send('midihang', { trackz:track});
+    });
     notesHaveChanged(false);
     clearSection();
   }, []);
 
   const onDelShortcut = useCallback(() => {
+    tracks.forEach((track, t) => {
+      ipcRenderer.send('midihang', { trackz:track});
+    });
     notesHaveChanged(false);
     clearSectionMeasure();
   }, []);
 
   const onSpaceShortcut = useCallback(() => {
+    tracks.forEach((track, t) => {
+      ipcRenderer.send('midihang', { trackz:track});
+    });
     toggleIsPlaying();
   }, []);
 
   const onShiftSpaceShortcut = useCallback(() => {
+    tracks.forEach((track, t) => {
+      ipcRenderer.send('midihang', { trackz:track});
+    });
     toggleIsPlaying();
   }, []);
 
@@ -724,9 +725,13 @@ const handleMouseLeave = (event) => {
   };
 
   const onSelectKey = (v) => {
+
     if (typeof v === 'string') {
       v = parseInt(v, 10);
     }
+    for(var j=0;j<tracks.length;j++){
+      ipcRenderer.send('midihang', {trackz:tracks[j]});
+        }
 
     notesHaveChanged(false);
     dispatch(changeKey(v));
@@ -734,8 +739,7 @@ const handleMouseLeave = (event) => {
 
   const menu = (
     <EditorMenu
-      swing={swing}
-      changeSwingOnTone={changeSwingOnTone}
+
       tempo={tempo}
       changeTempoOnTone={changeTempoOnTone}
       toggleIsPlaying={toggleIsPlaying}
@@ -836,7 +840,7 @@ const handleMouseLeave = (event) => {
                 inverse
                 showEmpty={false}
               />
-              <label> Scale Type: </label>
+              <label> Scale: </label>
               <Select
                 options={scaleOptions}
                 selected={masterScaleType}
@@ -844,7 +848,7 @@ const handleMouseLeave = (event) => {
                 inverse
                 showEmpty={false}
               />
-              MIDI CLOCK OUT:
+              MIDICLOCK:
               <Switch
         isActive={clockSwitchState}
         setIsActive={toggleClockSwitch} // Use the handler prop
@@ -926,6 +930,10 @@ const EditorMenu = ({
   sendPanicSignal,
   onConfigOpen,
   onHelpOpen,
+  masterScaleType,
+  onChangeScaleType,
+  masterKey,
+  onSelectKey
 }) => (
   <Menu>
   {/* swingwashere */}
@@ -944,6 +952,22 @@ const EditorMenu = ({
     <Button inverse onClick={sendPanicSignal} style={{ marginLeft: '10px' }}>
       <FontAwesomeIcon icon={faExclamation} />
     </Button>
+              <Select
+                options={keyOptions}
+                selected={masterKey}
+                onSelectChange={onSelectKey}
+                inverse
+                showEmpty={false}
+              />
+
+              <Select
+                options={scaleOptions}
+                selected={masterScaleType}
+                onSelectChange={onChangeScaleType}
+                inverse
+                showEmpty={false}
+              />
+
     <Button inverse onClick={onConfigOpen} style={{ marginLeft: '10px' }}>
       <FontAwesomeIcon icon={faCog} />
     </Button>
