@@ -306,10 +306,14 @@ timer.on('message', (message) => {
 
             });
 
-        if(playingNotes[track.name]!=playingNotesLast[track.name]){
+            console.log(track.name,playingNotes[track.name]);
+            mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:playingNotes[track.name]});
+
+        /*if(playingNotes[track.name]!=playingNotesLast[track.name]){
            mainWindow.webContents.send('savePlayingNotes', { trackName:track.name, playingNotes:playingNotes[track.name]});
+          console.log("playingnotes",track.name,playingNotes[track.name]);
           }
-          playingNotesLast[track.name]=playingNotes[track.name];
+          playingNotesLast[track.name]=playingNotes[track.name];*/
         }
 
           });
@@ -392,6 +396,7 @@ timer.on('message', (message) => {
 
     //console.log(trackz.name,playingNotes[trackz.name]);
     mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:playingNotes[trackz.name]});
+    console.log("playingnotes",trackz.name,playingNotes[trackz.name]);
 
     });
 
@@ -415,7 +420,8 @@ timer.on('message', (message) => {
         }
       }
       mainWindow.webContents.send('savePlayingNotes', { trackName:trackz.name, playingNotes:playingNotes[trackz.name]});
- } });
+      console.log("playingnotes",trackz.name,playingNotes[trackz.name]);
+    } });
 
     ipcMain.on('tempoChange', (evt, { tempo }) => {
     timer.postMessage({ type: 'setBpm', value: tempo });

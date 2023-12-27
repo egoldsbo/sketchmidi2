@@ -8,6 +8,7 @@ toptodo:
 prompt to update
 
 todo:
+note hang on dialog box
 improve port behavior
 more clear indicator of when section is updated
 update menus/documentation

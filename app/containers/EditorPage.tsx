@@ -470,7 +470,6 @@ export default function EditorPage() {
     ipcRenderer.on('savePlayingNotes',(evt,{trackName, playingNotes})=>{
       //console.log("Playing Notes " + playingNotes)
       dispatch(changePlayingNotes(trackName, playingNotes));
-      ipcRenderer.send('playingNotesUpdated');
     })
 
 

@@ -15,7 +15,7 @@ function checkTimeAndSendTick() {
     timelast = timeNow;
     parentPort.postMessage('clocktick');
     midiclockcount++;
-    midiclockcount=midiclockcount%6;
+    midiclockcount=midiclockcount%12;
     if(midiclockcount==0){
       parentPort.postMessage('notetick');
     }
