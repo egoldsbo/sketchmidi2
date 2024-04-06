@@ -43,7 +43,7 @@
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
     "emotion-theming": "^10.0.27",
-    "eslint": "^7.5.0",
+    "eslint": "^9.0.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-import-resolver-node": "^0.3.4",
